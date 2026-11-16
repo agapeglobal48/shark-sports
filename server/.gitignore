@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+src/generated/
+
+# Copied in by `prisma skills sync` on install
+.agents/
+.claude/
+.cursor/
+.devin/

@@ -1,0 +1,193 @@
+@import "tailwindcss";
+
+@theme {
+  /* Surfaces */
+  --color-ink: #070708;
+  --color-coal: #0e0f11;
+  --color-steel: #16181b;
+  --color-line: #26292e;
+
+  /* Text */
+  --color-bone: #f4f1ea;
+  --color-mute: #8e939b;
+
+  /* Accents */
+  --color-blaze: #ff5b1f;
+  --color-blaze-dark: #e0430b;
+  --color-shark: #22e4f6;
+
+  --font-display: "Anton", "Impact", "Arial Narrow", sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --ease-snap: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 28s) linear infinite;
+  --animate-marquee-reverse: marquee var(--marquee-duration, 28s) linear infinite reverse;
+  --animate-scroll-dot: scroll-dot 1.8s var(--ease-out-expo) infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes scroll-dot {
+    0% { transform: translateY(0); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translateY(14px); opacity: 0; }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-ink font-sans text-bone antialiased;
+    text-rendering: optimizeLegibility;
+    /* Stop any decorative overflow causing sideways scrolling (clip keeps sticky headers working) */
+    overflow-x: clip;
+  }
+  ::selection {
+    @apply bg-blaze text-ink;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-blaze);
+    outline-offset: 3px;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10;
+  }
+
+  /* Outlined display text */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-bone);
+  }
+  .text-outline-mute {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--color-line);
+  }
+
+  /* Underline that sweeps in from the left on hover */
+  .link-sweep {
+    @apply relative;
+  }
+  .link-sweep::after {
+    content: "";
+    @apply absolute -bottom-1 left-0 h-[2px] w-full origin-right scale-x-0 bg-blaze transition-transform duration-500 ease-out-expo;
+  }
+  .link-sweep:hover::after,
+  .link-sweep[aria-current="page"]::after {
+    @apply origin-left scale-x-100;
+  }
+
+  /* Primary button: fill slides up on hover */
+  .btn {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3.5 text-sm font-bold uppercase tracking-[0.14em] transition-colors duration-300;
+  }
+  .btn > * {
+    @apply relative z-10;
+  }
+  .btn::before {
+    content: "";
+    @apply absolute inset-0 translate-y-full rounded-[inherit] transition-transform duration-500 ease-out-expo;
+  }
+  .btn:hover::before {
+    @apply translate-y-0;
+  }
+  .btn-primary {
+    @apply bg-blaze text-ink;
+  }
+  .btn-primary::before {
+    @apply bg-bone;
+  }
+  .btn-ghost {
+    @apply border border-bone/30 text-bone backdrop-blur-sm;
+  }
+  .btn-ghost::before {
+    @apply bg-bone;
+  }
+  .btn-ghost:hover {
+    @apply text-ink;
+  }
+  .btn:disabled {
+    @apply opacity-50;
+  }
+  .btn:disabled::before {
+    display: none;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-line bg-coal px-4 py-3.5 text-bone placeholder:text-mute/70 transition-colors duration-300 outline-none focus:border-blaze;
+  }
+
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.3em] text-blaze;
+  }
+}
+
+/* Film grain over everything for texture */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Hide scrollbars on horizontal scrollers */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Body text on the help and legal pages */
+.prose-info {
+  @apply space-y-4 leading-relaxed text-bone/80;
+}
+.prose-info h3 {
+  @apply pt-2 font-bold text-bone;
+}
+.prose-info ul {
+  @apply space-y-2 pl-1;
+}
+.prose-info ul > li {
+  @apply relative pl-6;
+}
+.prose-info ul > li::before {
+  content: "";
+  @apply absolute left-0 top-[0.7em] h-px w-3 bg-blaze;
+}
+.prose-info a:not(.btn) {
+  @apply font-bold text-bone underline decoration-blaze underline-offset-4 transition-colors hover:text-blaze;
+}
+.prose-info strong {
+  @apply text-bone;
+}

@@ -1,0 +1,271 @@
+// Shark Sports database schema
+// All money is stored as whole pence (Int) in GBP, e.g. £24.99 = 2499.
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  moduleFormat    = "esm"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+// ─── Users ────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         Role     @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  addresses Address[]
+  cart      Cart?
+  orders    Order[]
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  fullName  String
+  line1     String
+  line2     String?
+  city      String
+  county    String?
+  postcode  String
+  country   String   @default("GB")
+  phone     String?
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Catalogue ────────────────────────────────────────────
+
+/// Hoodies, Socks, Hats, Jerseys, Trousers, Shirts.
+/// parentId allows sub-categories later (e.g. Jerseys → Football).
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  sortOrder   Int      @default(0)
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryTree")
+  products Product[]
+}
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  logoUrl   String?
+  createdAt DateTime @default(now())
+
+  products Product[]
+}
+
+model Product {
+  id                  String   @id @default(cuid())
+  name                String
+  slug                String   @unique
+  description         String?
+  categoryId          String
+  brandId             String?
+  /// Selling price in pence.
+  pricePence          Int
+  /// Original price in pence, shown crossed out when on sale.
+  compareAtPricePence Int?
+  isActive            Boolean  @default(true)
+  isFeatured          Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  category Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  brand    Brand?         @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  colors   ProductColor[]
+  media    ProductMedia[]
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([isActive, isFeatured])
+}
+
+/// A colour of a product. Each colour has its own photos and its own sizes.
+model ProductColor {
+  id        String  @id @default(cuid())
+  productId String
+  name      String
+  /// Swatch colour, e.g. "#1fe3f5".
+  hexCode   String?
+  sortOrder Int     @default(0)
+
+  product  Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variants Variant[]
+  media    ProductMedia[]
+
+  @@unique([productId, name])
+}
+
+/// One size of one colour: the thing that is actually stocked and sold.
+model Variant {
+  id         String @id @default(cuid())
+  colorId    String
+  /// Free text so it fits every category: "M", "XL", "UK 7-11", "32W 30L", "One Size".
+  size       String
+  sku        String @unique
+  stock      Int    @default(0)
+  /// Optional price override in pence (e.g. XXL costs more). Null = use product price.
+  pricePence Int?
+  sortOrder  Int    @default(0)
+
+  color      ProductColor @relation(fields: [colorId], references: [id], onDelete: Cascade)
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@unique([colorId, size])
+}
+
+/// Images and videos stored in Cloudinary.
+/// colorId set = photo of a specific colour; null = general product media (e.g. a video).
+model ProductMedia {
+  id        String    @id @default(cuid())
+  productId String
+  colorId   String?
+  type      MediaType @default(IMAGE)
+  url       String
+  /// Cloudinary public_id, needed to delete or transform the file.
+  publicId  String
+  altText   String?
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color   ProductColor? @relation(fields: [colorId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([colorId])
+}
+
+// ─── Cart ─────────────────────────────────────────────────
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  updatedAt DateTime @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  cartId    String
+  variantId String
+  quantity  Int    @default(1)
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, variantId])
+}
+
+// ─── Orders ───────────────────────────────────────────────
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique
+  /// Null for guest checkout.
+  userId        String?
+  /// Filled in from Stripe when payment succeeds (guests enter it there).
+  email         String?
+  /// PENDING = checkout started but not paid. Becomes PAID via Stripe.
+  status        OrderStatus @default(PENDING)
+  currency      String      @default("GBP")
+  subtotalPence Int
+  shippingPence Int         @default(0)
+  discountPence Int         @default(0)
+  totalPence    Int
+
+  // Delivery address, copied from Stripe when payment succeeds (empty while PENDING).
+  shipFullName String?
+  shipLine1    String?
+  shipLine2    String?
+  shipCity     String?
+  shipCounty   String?
+  shipPostcode String?
+  shipCountry  String  @default("GB")
+  shipPhone    String?
+
+  /// Stripe Checkout Session id (cs_...), set when checkout starts.
+  stripeSessionId String?   @unique
+  paymentProvider String?
+  /// Stripe PaymentIntent id (pi_...) once paid; use it to find the payment in Stripe.
+  paymentRef      String?
+  paidAt          DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user  User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status, createdAt])
+}
+
+/// Product details are copied at purchase time so the order stays correct
+/// even if the product is later renamed, repriced or deleted.
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  variantId      String?
+  /// For linking back to the product page (the product may since be deleted).
+  productSlug    String?
+  productName    String
+  colorName      String
+  size           String
+  sku            String
+  unitPricePence Int
+  quantity       Int
+  imageUrl       String?
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant Variant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+}
