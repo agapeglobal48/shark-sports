@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://RAILWAY_API_DOMAIN/api/:path*" },
-    { "source": "/sitemap.xml", "destination": "https://RAILWAY_API_DOMAIN/sitemap.xml" },
-    { "source": "/robots.txt", "destination": "https://RAILWAY_API_DOMAIN/robots.txt" },
+    { "source": "/api/:path*", "destination": "https://shark-sports-production.up.railway.app/api/:path*" },
+    { "source": "/sitemap.xml", "destination": "https://shark-sports-production.up.railway.app/sitemap.xml" },
+    { "source": "/robots.txt", "destination": "https://shark-sports-production.up.railway.app/robots.txt" },
     { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ],
   "headers": [
