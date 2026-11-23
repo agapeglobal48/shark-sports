@@ -192,7 +192,7 @@ const sections = [
 ]
 
 export default function Privacy() {
-  useSeo({ title: 'Privacy policy', description: 'How Shark Sports collects, uses and protects your personal information.' })
+  useSeo({ title: 'Privacy policy', description: 'How Mako Sports collects, uses and protects your personal information.' })
   return (
     <InfoPage
       eyebrow="Legal"

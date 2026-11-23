@@ -9,6 +9,7 @@ const STORED = [
   { name: 'token', type: 'Cookie', purpose: 'Keeps you logged in to your account.', lasts: '7 days, or until you log out' },
   { name: 'shark-cart-v1', type: 'Local storage', purpose: 'Remembers what is in your bag.', lasts: 'Until you check out or clear your browser' },
   { name: 'shark-cookie-notice', type: 'Local storage', purpose: 'Remembers that you have seen our cookie notice.', lasts: 'Until you clear your browser' },
+  { name: 'mako-kit-designs', type: 'Local storage', purpose: 'Keeps the kit designs you choose to save, including any logo you added.', lasts: 'Until you delete them or clear your browser' },
 ]
 
 const sections = [
@@ -95,7 +96,7 @@ const sections = [
 ]
 
 export default function Cookies() {
-  useSeo({ title: 'Cookie policy', description: 'The cookies Shark Sports uses and why.' })
+  useSeo({ title: 'Cookie policy', description: 'The cookies Mako Sports uses and why.' })
   return (
     <InfoPage
       eyebrow="Legal"

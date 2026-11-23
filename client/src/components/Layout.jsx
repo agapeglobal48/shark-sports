@@ -23,7 +23,8 @@ export default function Layout() {
       <motion.main
         id="main"
         key={pathname}
-        className="flex-1"
+        // Inner pages have top padding for the header, so pull them up to avoid a large gap.
+        className={pathname === '/' ? 'flex-1' : 'flex-1 -mt-16 md:-mt-24'}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}

@@ -3,10 +3,10 @@
 // to spot what still needs filling in. Fill these in before launch.
 
 export const BUSINESS = {
-  tradingName: 'Shark Sports',
+  tradingName: 'Mako Sports',
 
-  // Sole trader: your full name (e.g. "Jane Smith trading as Shark Sports").
-  // Limited company: the registered name (e.g. "Shark Sports Ltd").
+  // Sole trader: your full name (e.g. "Jane Smith trading as Mako Sports").
+  // Limited company: the registered name (e.g. "Mako Sports Ltd").
   legalName: '',
   // Limited companies only, e.g. "12345678" and "England and Wales".
   companyNumber: '',

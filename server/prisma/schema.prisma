@@ -1,4 +1,4 @@
-// Shark Sports database schema
+// Mako Sports database schema
 // All money is stored as whole pence (Int) in GBP, e.g. £24.99 = 2499.
 
 generator client {

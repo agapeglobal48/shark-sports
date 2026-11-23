@@ -13,7 +13,7 @@ const sections = [
     title: 'About these terms',
     body: (
       <>
-        <p>These terms apply when you buy from the Shark Sports website. Please read them before you order. By placing an order you agree to them.</p>
+        <p>These terms apply when you buy from the Mako Sports website. Please read them before you order. By placing an order you agree to them.</p>
         <p>
           <LegalIdentity /> You can contact us at <EmailLink />.
         </p>
@@ -170,12 +170,12 @@ const sections = [
 ]
 
 export default function Terms() {
-  useSeo({ title: 'Terms of sale', description: 'The terms that apply when you buy from Shark Sports.' })
+  useSeo({ title: 'Terms of sale', description: 'The terms that apply when you buy from Mako Sports.' })
   return (
     <InfoPage
       eyebrow="Legal"
       title="Terms of sale"
-      intro="The agreement between you and us when you buy from Shark Sports. Your legal rights as a UK consumer always come first."
+      intro="The agreement between you and us when you buy from Mako Sports. Your legal rights as a UK consumer always come first."
       updated={BUSINESS.legalUpdated}
       sections={sections}
     />

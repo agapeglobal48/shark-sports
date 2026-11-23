@@ -10,7 +10,7 @@ import { useSeo } from '../hooks/useSeo.js'
 const EASE = [0.16, 1, 0.3, 1]
 
 export default function Contact() {
-  useSeo({ title: 'Contact us', description: 'Get in touch with Shark Sports about an order, sizing, returns or anything else.' })
+  useSeo({ title: 'Contact us', description: 'Get in touch with Mako Sports about an order, sizing, returns or anything else.' })
   const [copied, setCopied] = useState(false)
 
   async function copyEmail() {

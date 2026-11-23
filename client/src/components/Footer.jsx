@@ -13,7 +13,7 @@ export default function Footer() {
     <footer className="relative mt-24 overflow-hidden border-t border-line bg-coal">
       <div className="container-x grid gap-12 py-16 md:grid-cols-12">
         <div className="md:col-span-5">
-          <img src={LOGO} alt="Sharks" className="h-12 w-auto" />
+          <img src={LOGO} alt="Mako Sports" className="h-12 w-auto" />
           <p className="mt-6 max-w-sm text-mute">Hoodies, jerseys and training gear for people who don't ease off.</p>
           <Link to="/shop" className="group mt-8 inline-flex items-center gap-2 font-display text-3xl uppercase">
             <span className="link-sweep">Shop the range</span>
@@ -48,14 +48,14 @@ export default function Footer() {
       <Marquee duration={40} className="border-y border-line py-4">
         {Array.from({ length: 6 }).map((_, i) => (
           <span key={i} className="flex items-center font-display text-[13vw] uppercase leading-none md:text-[9vw]">
-            <span className="text-outline-mute px-6">Shark Sports</span>
+            <span className="text-outline-mute px-6">Mako Sports</span>
             <span className="text-blaze/20">✦</span>
           </span>
         ))}
       </Marquee>
 
       <div className="container-x flex flex-col justify-between gap-2 py-6 text-xs text-mute sm:flex-row">
-        <span>© {new Date().getFullYear()} Shark Sports. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Mako Sports. All rights reserved.</span>
         <nav aria-label="Legal" className="flex flex-wrap gap-x-5 gap-y-2">
           {INFO_LINKS.filter((l) => LEGAL.includes(l.to)).map((l) => (
             <Link key={l.to} to={l.to} className="transition-colors hover:text-bone">

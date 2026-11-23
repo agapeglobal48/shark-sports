@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-const SITE = 'Shark Sports'
-const DEFAULT_DESCRIPTION = 'Hoodies, jerseys, shirts, trousers, hats and socks from Shark Sports. UK delivery, free over £50.'
+const SITE = 'Mako Sports'
+const DEFAULT_DESCRIPTION = 'Hoodies, jerseys, shirts, trousers, hats and socks from Mako Sports. UK delivery, free over £50.'
 export const DEFAULT_IMAGE = 'https://res.cloudinary.com/bel0mpgs/video/upload/so_1,w_1200,h_630,c_fill,q_auto,f_jpg/shark-sports/site/hero.jpg'
 
 function setMeta(attr, key, content) {
@@ -31,7 +31,7 @@ function setCanonical(href) {
 
 /**
  * Sets the page title, description, canonical link and social-share tags.
- * `title` without the site name, e.g. "Hoodies" → "Hoodies | Shark Sports".
+ * `title` without the site name, e.g. "Hoodies" → "Hoodies | Mako Sports".
  * Pass noindex for pages search engines shouldn't list (account, checkout…).
  */
 export function useSeo({ title, description, image, type = 'website', noindex = false } = {}) {

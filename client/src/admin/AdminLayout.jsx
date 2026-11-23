@@ -20,7 +20,7 @@ export default function AdminLayout() {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    document.title = 'Admin | Shark Sports'
+    document.title = 'Admin | Mako Sports'
   }, [])
 
   const [lastPath, setLastPath] = useState(pathname)
@@ -96,7 +96,7 @@ export default function AdminLayout() {
           {/* Desktop sidebar */}
           <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-line bg-coal p-5 lg:flex">
             <Link to="/admin" className="mb-8 flex items-center gap-3 px-1">
-              <img src={LOGO} alt="Sharks" className="h-8" />
+              <img src={LOGO} alt="Mako Sports" className="h-8" />
               <span className="rounded-md bg-blaze/15 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-blaze">Admin</span>
             </Link>
             <div className="flex-1">{nav}</div>
@@ -106,7 +106,7 @@ export default function AdminLayout() {
           {/* Mobile top bar */}
           <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line bg-coal/95 px-4 backdrop-blur lg:hidden">
             <Link to="/admin" className="flex items-center gap-2">
-              <img src={LOGO} alt="Sharks" className="h-7" />
+              <img src={LOGO} alt="Mako Sports" className="h-7" />
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-blaze">Admin</span>
             </Link>
             <button onClick={() => setOpen((o) => !o)} className="rounded-lg p-2 hover:bg-bone/10" aria-label={open ? 'Close menu' : 'Open menu'}>

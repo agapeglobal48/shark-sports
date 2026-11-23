@@ -28,7 +28,7 @@ app.use(cookieParser())
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', app: 'Shark Sports API' })
+  res.json({ status: 'ok', app: 'Mako Sports API' })
 })
 
 app.use('/api/auth', authRoutes)

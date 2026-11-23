@@ -64,7 +64,7 @@ const FAQ = [
 ]
 
 export default function Delivery() {
-  useSeo({ title: 'Delivery & FAQ', description: 'UK delivery prices and times, and answers to common questions about ordering from Shark Sports.' })
+  useSeo({ title: 'Delivery & FAQ', description: 'UK delivery prices and times, and answers to common questions about ordering from Mako Sports.' })
   const { data: config } = useApi(api.checkoutConfig, 'checkout-config')
   const standard = config?.standardShippingPence ?? 399
   const freeOver = config?.freeShippingOverPence ?? 5000

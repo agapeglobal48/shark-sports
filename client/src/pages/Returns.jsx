@@ -101,7 +101,7 @@ const sections = [
 ]
 
 export default function Returns() {
-  useSeo({ title: 'Returns & refunds', description: 'How to return an order to Shark Sports and get your money back.' })
+  useSeo({ title: 'Returns & refunds', description: 'How to return an order to Mako Sports and get your money back.' })
   return (
     <InfoPage eyebrow="Help" title={['Returns', <span key="r" className="text-blaze">& refunds</span>]} intro="Not quite right? Send it back. Here's how." sections={sections}
       top={

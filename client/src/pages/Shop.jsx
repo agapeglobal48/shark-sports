@@ -70,7 +70,7 @@ export default function Shop() {
   useSeo({
     title: search ? `Search: ${search}` : current?.name || 'Shop all',
     description: current
-      ? `Shop ${current.name.toLowerCase()} at Shark Sports. UK delivery, free on orders over £50.`
+      ? `Shop ${current.name.toLowerCase()} at Mako Sports. UK delivery, free on orders over £50.`
       : 'Shop hoodies, jerseys, shirts, trousers, hats and socks. UK delivery, free on orders over £50.',
     noindex: Boolean(search),
   })

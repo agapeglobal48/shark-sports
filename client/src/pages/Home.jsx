@@ -40,7 +40,7 @@ function Hero() {
   const [src] = useState(() => (window.matchMedia('(max-width: 768px)').matches ? HERO_VIDEO.mobile : HERO_VIDEO.desktop))
 
   return (
-    <section ref={ref} className="relative h-svh min-h-150 overflow-hidden bg-ink">
+    <section ref={ref} className="relative h-[calc(100svh-6.5rem)] min-h-150 overflow-hidden bg-ink md:h-[calc(100svh-7.5rem)]">
       <motion.div className="absolute inset-0" style={{ y: videoY, scale: videoScale }}>
         {/* Video at reduced opacity so the headline stays readable */}
         <motion.div
@@ -66,7 +66,7 @@ function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
         >
-          <span className="h-px w-10 bg-blaze" /> New season · Shark Sports
+          <span className="h-px w-10 bg-blaze" /> New season · Mako Sports
         </motion.p>
 
         <h1 className="font-display text-[17vw] uppercase leading-[0.86] tracking-tight sm:text-[14vw] lg:text-[11.5vw] xl:text-[10rem]">

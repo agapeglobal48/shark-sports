@@ -70,7 +70,7 @@ function ProductView({ product }) {
   const firstImage = [...(color?.media ?? []), ...product.media].find((m) => m.type !== 'VIDEO')?.url
   useSeo({
     title: product.name,
-    description: product.description?.slice(0, 155) || `${product.name}${product.brand ? ` by ${product.brand.name}` : ''}. ${formatPrice(product.pricePence)} at Shark Sports, UK delivery.`,
+    description: product.description?.slice(0, 155) || `${product.name}${product.brand ? ` by ${product.brand.name}` : ''}. ${formatPrice(product.pricePence)} at Mako Sports, UK delivery.`,
     image: firstImage ? cldImage(firstImage, 1200) : undefined,
     type: 'product',
   })

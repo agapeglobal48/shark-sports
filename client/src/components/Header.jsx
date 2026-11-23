@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
-import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { ChevronDown, Menu, Search, ShoppingCart, X } from 'lucide-react'
 import { LOGO } from '../config.js'
 import { useCart } from '../context/CartContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -10,108 +10,107 @@ import { cx } from '../lib/format.js'
 import SearchOverlay from './SearchOverlay.jsx'
 
 const EASE = [0.16, 1, 0.3, 1]
+const NAV_LINK = 'whitespace-nowrap text-[15px] font-medium text-bone/85 transition-colors hover:text-blaze aria-[current=page]:text-blaze'
+const UTILITY_LINK = 'whitespace-nowrap transition-colors hover:text-blaze'
+const MENU_LINKS = [
+  { to: '/kit-designer', label: 'Kit Designer' },
+  { to: '/club-shop', label: 'Club Shop' },
+  { to: '/size-guide', label: 'Size' },
+  { to: '/care', label: 'Care' },
+  { to: '/contact', label: 'Help' },
+]
 
 export default function Header() {
   const { pathname } = useLocation()
   const { categories } = useCatalog()
-  const { count, setOpen, lastAdded } = useCart()
   const { user, isAdmin } = useAuth()
-  const { scrollY } = useScroll()
-  const [hidden, setHidden] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [shopOpen, setShopOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
-  // Hide when scrolling down, show when scrolling up.
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    const prev = scrollY.getPrevious() ?? 0
-    setHidden(y > prev && y > 240 && !menuOpen)
-    setScrolled(y > 30)
-  })
-
-  // Close the mobile menu when the page changes.
+  // Close the menus when the page changes.
   const [lastPath, setLastPath] = useState(pathname)
   if (lastPath !== pathname) {
     setLastPath(pathname)
     setMenuOpen(false)
+    setShopOpen(false)
   }
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
   }, [menuOpen])
 
-  const overHero = pathname === '/' && !scrolled && !menuOpen
-
   return (
     <>
-      <motion.header
-        className={cx(
-          'fixed inset-x-0 top-0 z-50 transition-colors duration-500',
-          overHero ? 'bg-transparent' : 'border-b border-line/60 bg-ink/80 backdrop-blur-xl',
-        )}
-        animate={{ y: hidden ? '-100%' : '0%' }}
-        transition={{ duration: 0.5, ease: EASE }}
-      >
-        <div className="container-x flex h-16 items-center justify-between gap-6 md:h-20">
-          <button className="-ml-2 p-2 lg:hidden" onClick={() => setMenuOpen((o) => !o)} aria-label={menuOpen ? 'Close menu' : 'Open menu'}>
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+      {/* Utility bar */}
+      <div className="relative z-50 border-b border-line bg-coal text-[13px] text-bone/85">
+        <div className="container-x flex h-10 items-stretch justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Link to="/contact" className={UTILITY_LINK}>Need help?</Link>
+            <span className="h-3.5 w-px bg-line" aria-hidden />
+            <Link to="/delivery" className={UTILITY_LINK}>Delivery &amp; FAQ</Link>
+          </div>
 
-          <Link to="/" className="group flex shrink-0 items-center" aria-label="Shark Sports home">
+          <div className="flex items-stretch">
+            {isAdmin && (
+              <Link to="/admin" className={cx(UTILITY_LINK, 'hidden items-center pr-4 font-bold text-blaze sm:flex')}>
+                Admin
+              </Link>
+            )}
+            <Link to={user ? '/account' : '/login'} className={cx(UTILITY_LINK, 'hidden items-center pr-5 sm:flex')}>
+              {user ? 'My account' : 'Log in / Register'}
+            </Link>
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="hidden w-14 items-center justify-center bg-blaze text-ink transition-colors hover:bg-blaze-dark lg:flex"
+              aria-label="Search"
+            >
+              <Search size={17} strokeWidth={2.5} />
+            </button>
+            <CartButton />
+          </div>
+        </div>
+      </div>
+
+      {/* Logo and main navigation stay visible while scrolling */}
+      <header className="sticky top-0 z-50 border-b border-line bg-ink">
+        <div className="container-x flex h-16 items-center justify-between gap-6 md:h-20">
+          <Link to="/" className="group flex shrink-0 items-center" aria-label="Mako Sports home">
             <img
               src={LOGO}
-              alt="Sharks"
-              className="h-9 w-auto transition-transform duration-500 ease-out-expo group-hover:-rotate-3 group-hover:scale-105 md:h-11"
+              alt="Mako Sports"
+              className="h-10 w-auto transition-transform duration-500 ease-out-expo group-hover:scale-105 md:h-12"
             />
           </Link>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
-            <NavLink to="/shop" end className="link-sweep text-[13px] font-bold uppercase tracking-[0.16em]">
-              Shop all
-            </NavLink>
-            {categories.map((c) => (
-              <NavLink key={c.slug} to={`/shop/${c.slug}`} className="link-sweep text-[13px] font-bold uppercase tracking-[0.16em] text-bone/80 transition-colors hover:text-bone">
-                {c.name}
+          <nav className="hidden items-center gap-5 lg:flex xl:gap-9" aria-label="Main">
+            <ShopDropdown categories={categories} open={shopOpen} setOpen={setShopOpen} />
+            {MENU_LINKS.map((l) => (
+              <NavLink key={l.to} to={l.to} className={NAV_LINK}>
+                {l.label}
               </NavLink>
             ))}
           </nav>
 
-          <div className="-mr-2 flex items-center gap-1">
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="mr-1 hidden rounded-full border border-blaze/50 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-widest text-blaze transition-colors hover:bg-blaze hover:text-ink sm:inline-block"
-              >
-                Admin
-              </Link>
-            )}
-            <IconButton label="Search" onClick={() => setSearchOpen(true)}>
-              <Search size={21} />
-            </IconButton>
-            <IconButton label={user ? 'My account' : 'Log in'} to={user ? '/account' : '/login'} className="hidden sm:inline-flex">
-              <User size={21} />
-            </IconButton>
-            <IconButton label={`Bag, ${count} items`} onClick={() => setOpen(true)}>
-              <motion.span key={lastAdded} animate={lastAdded ? { rotate: [0, -14, 10, -6, 0], scale: [1, 1.2, 1] } : {}} transition={{ duration: 0.6 }} className="inline-flex">
-                <ShoppingBag size={21} />
-              </motion.span>
-              <AnimatePresence>
-                {count > 0 && (
-                  <motion.span
-                    key="badge"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-blaze px-1 text-[10px] font-extrabold text-ink"
-                  >
-                    {count}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </IconButton>
+          <div className="flex items-center gap-2 lg:hidden">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="grid h-10 w-11 place-items-center rounded-md bg-blaze text-ink transition-colors hover:bg-blaze-dark"
+              aria-label="Search"
+            >
+              <Search size={18} strokeWidth={2.5} />
+            </button>
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className="grid h-10 w-11 place-items-center rounded-md border border-line transition-colors hover:bg-bone/10"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       <MobileMenu open={menuOpen} categories={categories} user={user} />
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
@@ -119,39 +118,86 @@ export default function Header() {
   )
 }
 
-function IconButton({ children, label, onClick, to, className }) {
-  const cls = cx(
-    'relative inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 hover:bg-bone/10 active:scale-90',
-    className,
-  )
-  return to ? (
-    <Link to={to} className={cls} aria-label={label}>
-      {children}
-    </Link>
-  ) : (
-    <button className={cls} onClick={onClick} aria-label={label}>
-      {children}
+function CartButton() {
+  const { count, setOpen, lastAdded } = useCart()
+  return (
+    <button
+      onClick={() => setOpen(true)}
+      className="flex items-center gap-1.5 bg-steel px-3 font-semibold text-bone transition-colors hover:bg-line"
+      aria-label={`Cart, ${count} items`}
+    >
+      <motion.span
+        key={lastAdded}
+        animate={lastAdded ? { rotate: [0, -14, 10, -6, 0], scale: [1, 1.2, 1] } : {}}
+        transition={{ duration: 0.6 }}
+        className="inline-flex text-blaze"
+      >
+        <ShoppingCart size={16} />
+      </motion.span>
+      <span><span className="hidden sm:inline">Cart: </span>{count}</span>
     </button>
   )
 }
 
+function ShopDropdown({ categories, open, setOpen }) {
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setOpen(false)}
+    >
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={cx(NAV_LINK, 'flex items-center gap-1 py-2')}
+        aria-expanded={open}
+        aria-haspopup="true"
+      >
+        Sport
+        <ChevronDown size={15} className={cx('transition-transform duration-300', open && 'rotate-180')} />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="absolute left-0 top-full w-56 pt-3"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="overflow-hidden rounded-lg border border-line bg-coal py-2 shadow-2xl">
+              <Link to="/shop" className="block px-4 py-2.5 text-sm font-bold text-blaze transition-colors hover:bg-bone/5">
+                Shop all
+              </Link>
+              {categories.map((c) => (
+                <Link key={c.slug} to={`/shop/${c.slug}`} className="block px-4 py-2.5 text-sm text-bone/85 transition-colors hover:bg-bone/5 hover:text-blaze">
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 function MobileMenu({ open, categories, user }) {
-  const links = [
-    { to: '/shop', label: 'Shop all' },
-    ...categories.map((c) => ({ to: `/shop/${c.slug}`, label: c.name })),
-  ]
+  const links = [{ to: '/shop', label: 'Sport' }, ...MENU_LINKS]
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-40 flex flex-col bg-ink pt-20 lg:hidden"
+          className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-ink pt-28 lg:hidden"
           initial={{ clipPath: 'inset(0 0 100% 0)' }}
           animate={{ clipPath: 'inset(0 0 0% 0)' }}
           exit={{ clipPath: 'inset(0 0 100% 0)' }}
           transition={{ duration: 0.7, ease: EASE }}
         >
           <motion.nav
-            className="container-x flex flex-1 flex-col justify-center gap-1"
+            className="container-x flex flex-1 flex-col gap-1 py-6"
             initial="hidden"
             animate="show"
             transition={{ staggerChildren: 0.05, delayChildren: 0.25 }}
@@ -160,7 +206,7 @@ function MobileMenu({ open, categories, user }) {
             {links.map((l, i) => (
               <div key={l.to} className="overflow-hidden">
                 <motion.div variants={{ hidden: { y: '100%' }, show: { y: 0 } }} transition={{ duration: 0.7, ease: EASE }}>
-                  <NavLink to={l.to} end={l.to === '/shop'} className="group flex items-baseline gap-4 py-1 font-display text-5xl uppercase leading-tight sm:text-6xl">
+                  <NavLink to={l.to} end={l.to === '/shop'} className="group flex items-baseline gap-4 py-1 font-display text-4xl uppercase leading-tight sm:text-5xl">
                     <span className="font-sans text-xs font-bold text-blaze">0{i + 1}</span>
                     <span className="transition-transform duration-500 ease-out-expo group-hover:translate-x-3 group-aria-[current=page]:text-blaze">
                       {l.label}
@@ -169,6 +215,13 @@ function MobileMenu({ open, categories, user }) {
                 </motion.div>
               </div>
             ))}
+            <div className="mt-5 flex flex-wrap gap-2">
+              {categories.map((c) => (
+                <Link key={c.slug} to={`/shop/${c.slug}`} className="rounded-full border border-line px-4 py-2 text-xs font-bold uppercase tracking-widest text-bone/85 transition-colors hover:border-blaze hover:text-blaze">
+                  {c.name}
+                </Link>
+              ))}
+            </div>
           </motion.nav>
           <motion.div
             className="container-x flex items-center justify-between border-t border-line py-6 text-sm font-semibold uppercase tracking-widest"
@@ -176,7 +229,7 @@ function MobileMenu({ open, categories, user }) {
             animate={{ opacity: 1, transition: { delay: 0.6 } }}
           >
             <Link to={user ? '/account' : '/login'}>{user ? `Hi, ${user.name.split(' ')[0]}` : 'Log in / Sign up'}</Link>
-            <span className="text-mute">Shark Sports</span>
+            <span className="text-mute">Mako Sports</span>
           </motion.div>
         </motion.div>
       )}

@@ -13,7 +13,7 @@ export const HERO_VIDEO = {
   poster: `${videoBase}/so_1,q_auto,f_auto,w_1600,c_limit/${HERO_ID}.jpg`,
 }
 
-export const LOGO = '/logo-mark.png'
+export const LOGO = '/mako-logo.png'
 
 // Shown in the shop's size filter.
 export const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size']
