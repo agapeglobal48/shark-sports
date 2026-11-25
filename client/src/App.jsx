@@ -17,6 +17,7 @@ import Contact from './pages/Contact.jsx'
 import KitDesigner from './pages/KitDesigner.jsx'
 import ClubShop from './pages/ClubShop.jsx'
 import SizeGuide from './pages/SizeGuide.jsx'
+import SizeGuideProduct from './pages/SizeGuideProduct.jsx'
 import Care from './pages/Care.jsx'
 import Help from './pages/Help.jsx'
 import { PhotoWall } from './pages/ComingSoon.jsx'
@@ -53,6 +54,7 @@ export default function App() {
         <Route path="club-shop" element={<ClubShop />} />
         <Route path="photo-wall" element={<PhotoWall />} />
         <Route path="size-guide" element={<SizeGuide />} />
+        <Route path="size-guide/:slug" element={<SizeGuideProduct />} />
         <Route path="care" element={<Care />} />
         <Route path="help" element={<Help />} />
         <Route path="*" element={<NotFound />} />

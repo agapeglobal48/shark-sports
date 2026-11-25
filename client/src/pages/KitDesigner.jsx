@@ -1,6 +1,7 @@
 import { useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Download, RotateCcw, Save, Trash2, Upload } from 'lucide-react'
+import { KitAsk, KitClosing, KitPicker, KitReasons } from '../components/KitDesignerIntro.jsx'
 import { cx } from '../lib/format.js'
 import { useSeo } from '../hooks/useSeo.js'
 
@@ -399,15 +400,40 @@ export default function KitDesigner() {
     setAngle((a) => Math.round(a / 180) * 180)
   }
 
-  return (
-    <div className="container-x pb-16 pt-24 md:pt-32">
-      <p className="eyebrow mb-3">Free design tool</p>
-      <h1 className="font-display text-5xl uppercase leading-none md:text-7xl">
-        Kit <span className="text-blaze">Designer</span>
-      </h1>
-      <p className="mt-4 max-w-2xl text-bone/75">Choose your item, style and colours, then add your logo, names, numbers and initials.</p>
+  // A tile on the landing grid: load that item into the designer and bring it into view.
+  function chooseItem(item) {
+    update({ garment: item.design })
+    setAngle(0)
+    setTab('Style')
+    setNotice({ text: `${item.label}: now choose a style and colours.` })
+    document.getElementById('designer')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-12">
+  return (
+    <div className="pt-16 md:pt-24">
+      <nav aria-label="Breadcrumb" className="container-x pb-4 pt-6 text-xs font-bold uppercase tracking-widest text-mute">
+        <Link to="/" className="hover:text-bone">Home</Link>
+        <span className="mx-2">/</span>
+        <span className="text-bone">Kit Designer</span>
+      </nav>
+
+      <header className="container-x">
+        <h1 className="font-display text-5xl uppercase leading-none md:text-7xl">
+          3D Kit <span className="text-blaze">Designer</span>
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-bone/80">Pick your colours, then add your logo, numbers, names and initials in a few simple steps.</p>
+        <p className="mt-1 max-w-2xl text-bone/70">Choose your sport or team wear item below and start designing your kit today.</p>
+      </header>
+
+      <div className="container-x py-10">
+        <KitPicker onChoose={chooseItem} />
+      </div>
+
+      <section id="designer" className="container-x scroll-mt-24 pb-16 pt-4" aria-labelledby="designer-title">
+      <h2 id="designer-title" className="font-display text-3xl uppercase md:text-4xl">
+        Design your <span className="text-blaze">{GARMENTS[design.garment].label.toLowerCase()}</span>
+      </h2>
+      <div className="mt-6 grid gap-6 lg:grid-cols-12">
         <section className="lg:col-span-7" aria-label="Kit preview">
           <div className="rounded-2xl border border-line bg-steel p-4 lg:sticky lg:top-24">
             <div
@@ -608,6 +634,11 @@ export default function KitDesigner() {
           </button>
         </section>
       </div>
+      </section>
+
+      <KitReasons />
+      <KitAsk />
+      <KitClosing />
     </div>
   )
 }
