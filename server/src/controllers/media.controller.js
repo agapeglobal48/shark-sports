@@ -42,7 +42,7 @@ export async function uploadProductMedia(req, res) {
   const results = await Promise.allSettled(
     files.map((file) =>
       uploadBuffer(file.buffer, {
-        folder: `shark-sports/products/${productId}`,
+        folder: `mako-sports/products/${productId}`,
         resourceType: IMAGE_TYPES.includes(file.mimetype) ? 'image' : 'video',
       }),
     ),

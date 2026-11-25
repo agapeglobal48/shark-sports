@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // The bag is kept in the browser for now; it moves to the server at checkout.
-const STORAGE_KEY = 'shark-cart-v1'
+const STORAGE_KEY = 'mako-cart-v1'
+const OLD_STORAGE_KEY = 'shark-cart-v1' // name used before the rebrand
 const CartContext = createContext(null)
 
 function load() {
   try {
-    const items = JSON.parse(localStorage.getItem(STORAGE_KEY))
+    const items = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(OLD_STORAGE_KEY))
     return Array.isArray(items) ? items : []
   } catch {
     return []
@@ -21,6 +22,7 @@ export function CartProvider({ children }) {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+      localStorage.removeItem(OLD_STORAGE_KEY)
     } catch {
       /* storage full or blocked: bag still works for this visit */
     }

@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
-import { HERO_VIDEO, LOGO } from '../config.js'
+import { HOME_VIDEO, LOGO } from '../config.js'
 import { api } from '../api/client.js'
 import { useApi } from '../hooks/useApi.js'
 import { useCatalog } from '../context/CatalogContext.jsx'
@@ -28,6 +28,9 @@ export default function Home() {
 
 // ─── Hero ────────────────────────────────────────────────
 
+// The logo sits in the upper part of the frame, so keep that part in view when the sides are cropped.
+const HERO_MEDIA = 'h-full w-full object-cover object-[50%_30%]'
+
 function Hero() {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
@@ -36,30 +39,32 @@ function Hero() {
   const textY = useTransform(scrollYProgress, [0, 1], ['0%', '40%'])
   const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
-  // Phones get the smaller (~0.9 MB) version.
-  const [src] = useState(() => (window.matchMedia('(max-width: 768px)').matches ? HERO_VIDEO.mobile : HERO_VIDEO.desktop))
+  // The intro plays once and stops on the logo. If it can't play (autoplay blocked,
+  // e.g. iPhone Low Power Mode, or the visitor prefers reduced motion), show the logo frame instead.
+  const videoRef = useRef(null)
+  const [stillOnly, setStillOnly] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  useEffect(() => {
+    if (stillOnly) return
+    videoRef.current?.play()?.catch(() => setStillOnly(true))
+  }, [stillOnly])
 
   return (
-    <section ref={ref} className="relative h-[calc(100svh-6.5rem)] min-h-150 overflow-hidden bg-ink md:h-[calc(100svh-7.5rem)]">
-      <motion.div className="absolute inset-0" style={{ y: videoY, scale: videoScale }}>
-        {/* Video at reduced opacity so the headline stays readable */}
-        <motion.div
-          className="h-full w-full opacity-55"
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 0.55, scale: 1 }}
-          transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {/* Poster underneath: shows instantly, and stays if autoplay is blocked (e.g. iPhone Low Power Mode) */}
-          <img src={HERO_VIDEO.poster} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          <video className="relative h-full w-full object-cover" src={src} poster={HERO_VIDEO.poster} autoPlay muted loop playsInline preload="auto" aria-hidden />
+    <section ref={ref} className="relative h-[calc(100svh-6.5rem)] min-h-150 overflow-hidden bg-[#031a33] md:h-[calc(100svh-7.5rem)]">
+      {/* The video takes the top of the hero so the logo is never behind the text */}
+      <motion.div className="absolute inset-x-0 top-0 aspect-3/2 sm:aspect-2/1 md:aspect-auto md:h-[80%] [mask-image:linear-gradient(to_bottom,black_70%,transparent)]" style={{ y: videoY, scale: videoScale }}>
+        <motion.div className="h-full w-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}>
+          {stillOnly ? (
+            <img src={HOME_VIDEO.poster} alt="" className={HERO_MEDIA} />
+          ) : (
+            <video ref={videoRef} className={HERO_MEDIA} src={HOME_VIDEO.src} muted playsInline preload="auto" aria-hidden />
+          )}
         </motion.div>
       </motion.div>
 
-      {/* Darkening so the text reads clearly over any frame */}
-      <div className="absolute inset-0 bg-linear-to-t from-ink via-ink/30 to-ink/60" />
-      <div className="absolute inset-0 bg-linear-to-r from-ink/80 via-ink/20 to-transparent" />
+      {/* Blend the bottom of the video into the page, leaving the logo bright */}
+      <div className="absolute inset-0 bg-linear-to-t from-ink via-ink/70 via-30% to-transparent to-55%" />
 
-      <motion.div style={{ y: textY, opacity: textOpacity }} className="container-x relative flex h-full flex-col justify-end pb-20 md:pb-24">
+      <motion.div style={{ y: textY, opacity: textOpacity }} className="container-x relative flex h-full flex-col justify-end pb-16 md:pb-12">
         <motion.p
           className="eyebrow mb-5 flex items-center gap-3"
           initial={{ opacity: 0, x: -20 }}
@@ -69,11 +74,11 @@ function Hero() {
           <span className="h-px w-10 bg-blaze" /> New season · Mako Sports
         </motion.p>
 
-        <h1 className="font-display text-[17vw] uppercase leading-[0.86] tracking-tight sm:text-[14vw] lg:text-[11.5vw] xl:text-[10rem]">
-          <SplitLines lines={['Built to', <span key="b" className="text-outline">hunt.</span>]} delay={0.4} stagger={0.14} />
+        <h1 className="font-display text-[17vw] uppercase leading-[0.86] tracking-tight sm:text-[12vw] md:text-[7.5vw] xl:text-[7rem]">
+          <SplitLines lines={['Built to', <span key="b" className="text-outline">hunt.</span>]} className="block md:flex md:gap-[0.25em]" delay={0.4} stagger={0.14} />
         </h1>
 
-        <div className="mt-8 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <motion.p
             className="max-w-md text-base text-bone/80 md:text-lg"
             initial={{ opacity: 0, y: 20 }}
@@ -184,7 +189,7 @@ function CategoryTile({ category, index }) {
       )}
       {/* Fill that wipes up on hover */}
       <span className="absolute inset-0 translate-y-full bg-blaze transition-transform duration-700 ease-snap group-hover:translate-y-0" />
-      {/* Shark watermark */}
+      {/* Logo watermark */}
       <img
         src={LOGO}
         alt=""
@@ -253,11 +258,11 @@ function Statement() {
   return (
     <section className="container-x py-32 md:py-48">
       <Reveal as="p" className="eyebrow mb-8">
-        The Shark mindset
+        The Mako mindset
       </Reveal>
       <ScrollWords
         className="max-w-6xl font-display text-5xl uppercase leading-[1.02] md:text-7xl lg:text-8xl"
-        text="Sharks never stop *moving. Neither do you. Train *harder, recover *smarter and look the part doing *both."
+        text="A mako never stops *moving. Neither do you. Train *harder, recover *smarter and look the part doing *both."
       />
     </section>
   )

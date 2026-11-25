@@ -17,7 +17,7 @@ const MENU_LINKS = [
   { to: '/club-shop', label: 'Club Shop' },
   { to: '/size-guide', label: 'Size' },
   { to: '/care', label: 'Care' },
-  { to: '/contact', label: 'Help' },
+  { to: '/help', label: 'Help' },
 ]
 
 export default function Header() {
@@ -46,7 +46,7 @@ export default function Header() {
       <div className="relative z-50 border-b border-line bg-coal text-[13px] text-bone/85">
         <div className="container-x flex h-10 items-stretch justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Link to="/contact" className={UTILITY_LINK}>Need help?</Link>
+            <Link to="/help" className={UTILITY_LINK}>Need help?</Link>
             <span className="h-3.5 w-px bg-line" aria-hidden />
             <Link to="/delivery" className={UTILITY_LINK}>Delivery &amp; FAQ</Link>
           </div>

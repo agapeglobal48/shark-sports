@@ -15,7 +15,11 @@ import Cookies from './pages/Cookies.jsx'
 import Delivery from './pages/Delivery.jsx'
 import Contact from './pages/Contact.jsx'
 import KitDesigner from './pages/KitDesigner.jsx'
-import { Care, ClubShop, PhotoWall, SizeGuide } from './pages/ComingSoon.jsx'
+import ClubShop from './pages/ClubShop.jsx'
+import SizeGuide from './pages/SizeGuide.jsx'
+import Care from './pages/Care.jsx'
+import Help from './pages/Help.jsx'
+import { PhotoWall } from './pages/ComingSoon.jsx'
 
 // The admin panel is only downloaded when an admin opens it.
 const AdminLayout = lazy(() => import('./admin/AdminLayout.jsx'))
@@ -50,6 +54,7 @@ export default function App() {
         <Route path="photo-wall" element={<PhotoWall />} />
         <Route path="size-guide" element={<SizeGuide />} />
         <Route path="care" element={<Care />} />
+        <Route path="help" element={<Help />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 

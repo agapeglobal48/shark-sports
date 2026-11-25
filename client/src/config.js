@@ -13,6 +13,12 @@ export const HERO_VIDEO = {
   poster: `${videoBase}/so_1,q_auto,f_auto,w_1600,c_limit/${HERO_ID}.jpg`,
 }
 
+// Homepage logo intro. Plays once and holds on the logo; the poster is its last frame.
+export const HOME_VIDEO = {
+  src: '/mako-hero.mp4',
+  poster: '/mako-hero-poster.jpg',
+}
+
 export const LOGO = '/mako-logo.png'
 
 // Shown in the shop's size filter.

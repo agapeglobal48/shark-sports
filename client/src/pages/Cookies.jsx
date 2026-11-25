@@ -7,8 +7,8 @@ import { useSeo } from '../hooks/useSeo.js'
 // Keep this table in sync with what the site actually stores.
 const STORED = [
   { name: 'token', type: 'Cookie', purpose: 'Keeps you logged in to your account.', lasts: '7 days, or until you log out' },
-  { name: 'shark-cart-v1', type: 'Local storage', purpose: 'Remembers what is in your bag.', lasts: 'Until you check out or clear your browser' },
-  { name: 'shark-cookie-notice', type: 'Local storage', purpose: 'Remembers that you have seen our cookie notice.', lasts: 'Until you clear your browser' },
+  { name: 'mako-cart-v1', type: 'Local storage', purpose: 'Remembers what is in your bag.', lasts: 'Until you check out or clear your browser' },
+  { name: 'mako-cookie-notice', type: 'Local storage', purpose: 'Remembers that you have seen our cookie notice.', lasts: 'Until you clear your browser' },
   { name: 'mako-kit-designs', type: 'Local storage', purpose: 'Keeps the kit designs you choose to save, including any logo you added.', lasts: 'Until you delete them or clear your browser' },
 ]
 

@@ -1,67 +1,15 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { AnimatePresence, motion } from 'motion/react'
-import { Clock, MapPin, Plus, Truck } from 'lucide-react'
+import { motion } from 'motion/react'
+import { Clock, MapPin, Truck } from 'lucide-react'
 import InfoPage from '../components/InfoPage.jsx'
-import { EmailLink, Info, ReturnsDays } from '../components/Info.jsx'
+import { Info } from '../components/Info.jsx'
+import FaqItem from '../components/FaqItem.jsx'
+import { DELIVERY_FAQ } from '../content/faq.jsx'
 import { api } from '../api/client.js'
 import { useApi } from '../hooks/useApi.js'
 import { useSeo } from '../hooks/useSeo.js'
-import { cx, formatPrice } from '../lib/format.js'
+import { formatPrice } from '../lib/format.js'
 
 const EASE = [0.16, 1, 0.3, 1]
-
-const FAQ = [
-  {
-    q: 'Do I need an account to order?',
-    a: (
-      <>
-        No. You can check out as a guest. If you <Link to="/register">create an account</Link>, you can see all your orders in one place.
-      </>
-    ),
-  },
-  {
-    q: 'How do I know which size to choose?',
-    a: (
-      <>
-        Each product page lists the sizes available. If you're between sizes, we'd suggest going up one. Still not sure? Email <EmailLink /> and we'll help.
-      </>
-    ),
-  },
-  {
-    q: 'Can I change or cancel my order?',
-    a: (
-      <>
-        Email <EmailLink /> as soon as possible with your order number. If it hasn't been sent yet, we'll change or cancel it. If it's already on its way,
-        you can return it once it arrives.
-      </>
-    ),
-  },
-  {
-    q: 'How do I return something?',
-    a: (
-      <>
-        You have <ReturnsDays /> days from delivery. Everything you need is on our <Link to="/returns">returns page</Link>.
-      </>
-    ),
-  },
-  {
-    q: 'Which payment methods do you accept?',
-    a: 'Visa, Mastercard, American Express, Apple Pay and Google Pay. Payments are processed securely by Stripe, and we never see your card number.',
-  },
-  {
-    q: 'Do you deliver outside the UK?',
-    a: "Not yet. We currently deliver to UK addresses only, including Northern Ireland, the Highlands and islands.",
-  },
-  {
-    q: 'My order arrived damaged or with the wrong item.',
-    a: (
-      <>
-        Sorry about that. Email <EmailLink /> with your order number and a photo, and we'll put it right at no cost to you.
-      </>
-    ),
-  },
-]
 
 export default function Delivery() {
   useSeo({ title: 'Delivery & FAQ', description: 'UK delivery prices and times, and answers to common questions about ordering from Mako Sports.' })
@@ -104,7 +52,7 @@ export default function Delivery() {
         <p className="eyebrow mb-4">FAQ</p>
         <h2 className="mb-8 font-display text-5xl uppercase md:text-6xl">Good questions</h2>
         <div className="border-t border-line">
-          {FAQ.map((item, i) => (
+          {DELIVERY_FAQ.map((item, i) => (
             <FaqItem key={item.q} item={item} defaultOpen={i === 0} />
           ))}
         </div>
@@ -113,29 +61,3 @@ export default function Delivery() {
   )
 }
 
-function FaqItem({ item, defaultOpen }) {
-  const [open, setOpen] = useState(defaultOpen)
-  return (
-    <div className="border-b border-line">
-      <button onClick={() => setOpen((o) => !o)} aria-expanded={open} className="group flex w-full items-center justify-between gap-6 py-6 text-left">
-        <span className={cx('text-lg font-bold transition-all duration-300 group-hover:translate-x-2 md:text-xl', open ? 'text-blaze' : 'group-hover:text-blaze')}>{item.q}</span>
-        <motion.span
-          animate={{ rotate: open ? 45 : 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          className={cx('grid h-10 w-10 shrink-0 place-items-center rounded-full border transition-colors duration-300', open ? 'border-blaze bg-blaze text-ink' : 'border-line group-hover:border-blaze')}
-        >
-          <Plus size={18} />
-        </motion.span>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: EASE }} className="overflow-hidden">
-            <div className="prose-info max-w-2xl pb-6">
-              <p>{item.a}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}

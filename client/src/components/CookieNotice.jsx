@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Cookie } from 'lucide-react'
 
-const KEY = 'shark-cookie-notice'
+const KEY = 'mako-cookie-notice'
+const OLD_KEY = 'shark-cookie-notice' // name used before the rebrand
 
 function seen() {
   try {
-    return localStorage.getItem(KEY) === '1'
+    return localStorage.getItem(KEY) === '1' || localStorage.getItem(OLD_KEY) === '1'
   } catch {
     return false
   }

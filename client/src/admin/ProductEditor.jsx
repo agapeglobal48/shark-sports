@@ -334,7 +334,7 @@ function DetailsForm({ product, onSaved }) {
           </Field>
 
           {!isNew && (
-            <Field label="Web address" hint={`shark-sports…/product/${form.slug || '…'}`} className="md:col-span-2">
+            <Field label="Web address" hint={`${window.location.host}/product/${form.slug || '…'}`} className="md:col-span-2">
               <Input value={form.slug} onChange={set('slug')} />
             </Field>
           )}
